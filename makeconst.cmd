@@ -1,4 +1,2 @@
-pushd "%~dp0"
-gcc makeconst\makeconst.c && a > const.go && go fmt const.go
-if exist a.exe del a.exe
-popd
+@rem https://github.com/zetamatta/go-importconst
+go-importconst mbcs d(CP_THREAD_ACP)
