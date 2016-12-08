@@ -4,6 +4,9 @@ mbcs
 `mbcs` is the library for the programming language Go for Windows,
 to convert characters between the current codepage and UTF8
 
+This library uses `MultiByteToWideChar` and `WideCharToMultiByte`
+in `kernel32.dll`
+
 	var ansi []byte
 	var ansi_err error
 
