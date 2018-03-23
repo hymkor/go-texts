@@ -9,9 +9,7 @@ var kernel32 = syscall.NewLazyDLL("kernel32")
 var multiByteToWideChar = kernel32.NewProc("MultiByteToWideChar")
 var wideCharToMultiByte = kernel32.NewProc("WideCharToMultiByte")
 
-// Get ansi string (current codepage multibyte string)
-// from utf8(go-native) string
-func UtoA(utf8 string) ([]byte, error) {
+func utoa(utf8 string) ([]byte, error) {
 	utf16, err := syscall.UTF16FromString(utf8)
 	if err != nil {
 		return nil, err
@@ -34,8 +32,25 @@ func UtoA(utf8 string) ([]byte, error) {
 	return mbcs, nil
 }
 
-// Get utf8(go-native) string
-// from ansi string (current codepage multibyte string)
+// Convert UTF8 to Ansi string with \0
+func UtoAz(utf8 string) ([]byte, error) { return utoa(utf8) }
+
+// Convert UTF8 to Ansi string with \0 (for compatible)
+func UtoA(utf8 string) ([]byte, error) { return utoa(utf8) }
+
+// Convert UTF8 to Ansi string without \0 from UTF8 (chop \0)
+func UtoAc(utf8 string) ([]byte, error) {
+	ansi, err := utoa(utf8)
+	if err != nil {
+		return nil, err
+	}
+	if ansi[len(ansi)-1] == 0 {
+		ansi = ansi[:len(ansi)-1]
+	}
+	return ansi, nil
+}
+
+// Convert Ansi string to UTF8
 func AtoU(mbcs []byte) (string, error) {
 	if mbcs == nil || len(mbcs) <= 0 {
 		return "", nil
