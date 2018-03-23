@@ -2,27 +2,20 @@ package main
 
 import (
 	"fmt"
+	"github.com/zetamatta/go-mbcs"
 	"os"
-
-	mbcs ".."
 )
 
 func main() {
-	var ansi []byte
-	var ansi_err error
-
-	ansi, ansi_err = mbcs.UtoA("UTF8文字列")
-	if ansi_err != nil {
-		fmt.Fprintln(os.Stderr, ansi_err)
+	ansi, err := mbcs.UtoAc("UTF8文字列")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
 		return
 	}
 
-	var utf8 string
-	var utf8_err error
-
-	utf8, utf8_err = mbcs.AtoU(ansi)
-	if utf8_err != nil {
-		fmt.Fprintln(os.Stderr, utf8_err)
+	utf8, err := mbcs.AtoU(ansi)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
 		return
 	}
 	fmt.Printf("Ok: %s\n", utf8)
