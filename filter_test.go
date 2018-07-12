@@ -10,14 +10,12 @@ func TestNewFilter(t *testing.T) {
 	from := `abcdefg
 hijklmn
 opqrstu
-vwxyz
-`
+vwxyz`
 
 	to := `ABCDEFG
 HIJKLMN
 OPQRSTU
-VWXYZ
-`
+VWXYZ`
 
 	toUpperReader := NewFilter(strings.NewReader(from),
 		func(data []byte) ([]byte, error) {
