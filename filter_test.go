@@ -1,8 +1,7 @@
 package mbcs
 
 import (
-	"bufio"
-	"fmt"
+	"io/ioutil"
 	"strings"
 	"testing"
 )
@@ -26,13 +25,14 @@ VWXYZ
 		},
 	)
 
-	sc := bufio.NewScanner(toUpperReader)
-	var text strings.Builder
-	for sc.Scan() {
-		fmt.Fprintln(&text, sc.Text())
+	bytes, err := ioutil.ReadAll(toUpperReader)
+	if err != nil {
+		t.Fatalf(err.Error())
+		return
 	}
-	if text.String() != to {
-		t.Fatalf("NG: `%s` != `%s`\n", text.String(), to)
+	text := string(bytes)
+	if text != to {
+		t.Fatalf("NG: `%s` != `%s`\n", text, to)
 		return
 	}
 }
