@@ -10,12 +10,19 @@ var multiByteToWideChar = kernel32.NewProc("MultiByteToWideChar")
 var wideCharToMultiByte = kernel32.NewProc("WideCharToMultiByte")
 var getConsoleCp = kernel32.NewProc("GetConsoleCP")
 
-func GetConsoleCP() uintptr {
+const ACP = CP_ACP
+const THREAD_ACP = CP_THREAD_ACP
+
+// ConsoleCP returns Codepage number of Console.
+func ConsoleCP() uintptr {
 	cp, _, _ := getConsoleCp.Call()
 	return cp
 }
 
-func utoa(utf8 string, cp uintptr) ([]byte, error) {
+// UtoA converts from UTF8 to ANSI(codepage string).
+// cp : codepage such as ACP , THREAD_ACP or ConsoleCP()
+// chopzero : if it is true trim last \0.
+func UtoA(utf8 string, cp uintptr, chopzero bool) ([]byte, error) {
 	utf16, err := syscall.UTF16FromString(utf8)
 	if err != nil {
 		return nil, err
@@ -35,30 +42,15 @@ func utoa(utf8 string, cp uintptr) ([]byte, error) {
 	if rc == 0 {
 		return nil, syscall.GetLastError()
 	}
+	if chopzero && len(mbcs) > 0 && mbcs[len(mbcs)-1] == 0 {
+		mbcs = mbcs[:len(mbcs)-1]
+	}
 	return mbcs, nil
 }
 
-// UtoAz - Convert UTF8 to Ansi string with \0
-func UtoAz(utf8 string) ([]byte, error) { return utoa(utf8, CP_THREAD_ACP) }
-
-// UtoA - Convert UTF8 to Ansi string with \0 (for compatible)
-func UtoA(utf8 string) ([]byte, error) { return utoa(utf8, CP_THREAD_ACP) }
-
-// UtoAc - Convert UTF8 to Ansi string without \0 from UTF8 (chop \0)
-func UtoAc(utf8 string) ([]byte, error) {
-	ansi, err := utoa(utf8, CP_THREAD_ACP)
-	if err == nil && len(ansi) > 0 && ansi[len(ansi)-1] == 0 {
-		ansi = ansi[:len(ansi)-1]
-	}
-	return ansi, err
-}
-
-func Utf8ToConsoleCp(utf8 string) ([]byte, error) {
-	return utoa(utf8, GetConsoleCP())
-}
-
-// AtoU - Convert Ansi string to UTF8
-func atou(mbcs []byte, cp uintptr) (string, error) {
+// AtoU - Convert ANS(codepage string) to UTF8
+// cp : codepage such as ACP , THREAD_ACP or ConsoleCP()
+func AtoU(mbcs []byte, cp uintptr) (string, error) {
 	if mbcs == nil || len(mbcs) <= 0 {
 		return "", nil
 	}
@@ -77,12 +69,4 @@ func atou(mbcs []byte, cp uintptr) (string, error) {
 		return "", syscall.GetLastError()
 	}
 	return syscall.UTF16ToString(utf16), nil
-}
-
-func AtoU(mbcs []byte) (string, error) {
-	return atou(mbcs, CP_THREAD_ACP)
-}
-
-func ConsoleCpToUtf8(mbcs []byte) (string, error) {
-	return atou(mbcs, GetConsoleCP())
 }

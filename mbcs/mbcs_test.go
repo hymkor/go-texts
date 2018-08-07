@@ -6,7 +6,7 @@ import (
 )
 
 func TestUtoAc(t *testing.T) {
-	ansi, err := UtoAc("AAAA")
+	ansi, err := UtoA("AAAA", ACP, true)
 	if err != nil {
 		t.Fatal(err.Error())
 		return
@@ -18,7 +18,7 @@ func TestUtoAc(t *testing.T) {
 }
 
 func TestUtoAz(t *testing.T) {
-	ansiz, err := UtoAz("BBBB")
+	ansiz, err := UtoA("BBBB", ACP, false)
 	if err != nil {
 		t.Fatal(err.Error())
 		return
@@ -29,7 +29,7 @@ func TestUtoAz(t *testing.T) {
 }
 
 func TestUtoA(t *testing.T) {
-	ansiz, err := UtoAz("CCCC")
+	ansiz, err := UtoA("CCCC", ACP, false)
 	if err != nil {
 		t.Fatal(err.Error())
 		return
@@ -42,12 +42,12 @@ func TestUtoA(t *testing.T) {
 const Japanese = "あいうえお"
 
 func TestAtoU(t *testing.T) {
-	ansi, err := UtoAc(Japanese)
+	ansi, err := UtoA(Japanese, ACP, true)
 	if err != nil {
 		t.Fatal(err.Error())
 		return
 	}
-	utf8, err := AtoU(ansi)
+	utf8, err := AtoU(ansi, ACP)
 	if err != nil {
 		t.Fatal(err.Error())
 		return

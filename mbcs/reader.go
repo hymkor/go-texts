@@ -8,13 +8,13 @@ import (
 )
 
 // NewAutoDetectReader returns reader object traslating from MBCS/UTF8 to UTF8
-func NewAutoDetectReader(fd io.Reader) io.Reader {
+func NewAutoDetectReader(fd io.Reader, cp uintptr) io.Reader {
 	notutf8 := false
 	return filter.New(fd, func(line []byte) ([]byte, error) {
 		if !notutf8 && utf8.Valid(line) {
 			return line, nil
 		} else {
-			text, err := AtoU(line)
+			text, err := AtoU(line, cp)
 			if err != nil {
 				return nil, err
 			}

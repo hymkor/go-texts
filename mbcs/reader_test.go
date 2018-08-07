@@ -15,7 +15,7 @@ func TestReader2(t *testing.T) {
 	}
 	defer fd.Close()
 
-	reader := NewAutoDetectReader(fd)
+	reader := NewAutoDetectReader(fd, ACP)
 	sc := bufio.NewScanner(reader)
 	buffer := make([]string, 0, 3)
 	for sc.Scan() {
