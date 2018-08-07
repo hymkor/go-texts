@@ -1,4 +1,4 @@
-package mbcs
+package filter
 
 import (
 	"bufio"
@@ -36,7 +36,7 @@ func (this *Filter) Read(p []byte) (int, error) {
 }
 
 // NewFilter is the constructor for Filter
-func NewFilter(fd io.Reader, translator func([]byte) ([]byte, error)) io.Reader {
+func New(fd io.Reader, translator func([]byte) ([]byte, error)) io.Reader {
 	return &Filter{
 		r:          fd,
 		br:         bufio.NewReader(fd),

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/zetamatta/go-mbcs"
+	"github.com/zetamatta/go-texts/mbcs"
 	"os"
 )
 

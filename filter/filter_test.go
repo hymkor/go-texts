@@ -1,4 +1,4 @@
-package mbcs
+package filter
 
 import (
 	"io/ioutil"
@@ -17,7 +17,7 @@ HIJKLMN
 OPQRSTU
 VWXYZ`
 
-	toUpperReader := NewFilter(strings.NewReader(from),
+	toUpperReader := New(strings.NewReader(from),
 		func(data []byte) ([]byte, error) {
 			return []byte(strings.ToUpper(string(data))), nil
 		},
