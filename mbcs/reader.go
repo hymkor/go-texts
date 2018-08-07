@@ -1,9 +1,11 @@
 package mbcs
 
 import (
+	"bytes"
 	"io"
 	"unicode/utf8"
 
+	"github.com/zetamatta/go-texts"
 	"github.com/zetamatta/go-texts/filter"
 )
 
@@ -12,6 +14,7 @@ func NewAutoDetectReader(fd io.Reader, cp uintptr) io.Reader {
 	notutf8 := false
 	return filter.New(fd, func(line []byte) ([]byte, error) {
 		if !notutf8 && utf8.Valid(line) {
+			line = bytes.Replace(line, texts.ByteOrderMark, []byte{}, -1)
 			return line, nil
 		} else {
 			text, err := AtoU(line, cp)
