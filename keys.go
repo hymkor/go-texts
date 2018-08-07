@@ -5,6 +5,8 @@ import (
 	"sort"
 )
 
+var ByteOrderMark = []byte{0xEF, 0xBB, 0xBF}
+
 // SortedKeys makes sorted strings' array from keys of the given map whose key's type is string.
 func SortedKeys(mapInt interface{}) []string {
 	values := reflect.ValueOf(mapInt).MapKeys()
