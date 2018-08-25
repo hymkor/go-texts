@@ -2,7 +2,9 @@ package mbcs
 
 import (
 	"bufio"
+	"bytes"
 	"io"
+	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -34,4 +36,28 @@ func TestReader2(t *testing.T) {
 	println(buffer[0])
 	println(buffer[1])
 	println(buffer[2])
+}
+
+func BenchmarkFilter1(b *testing.B) {
+	data, err := ioutil.ReadFile("japan.txt")
+	if err != nil {
+		b.Fatalf("%s\n", err.Error())
+		return
+	}
+	for i := 0; i < b.N; i++ {
+		r := bytes.NewReader(data)
+		ioutil.ReadAll(NewAtoUReader(r, ACP))
+	}
+}
+
+func BenchmarkFilter2(b *testing.B) {
+	data, err := ioutil.ReadFile("japan.txt")
+	if err != nil {
+		b.Fatalf("%s\n", err.Error())
+		return
+	}
+	for i := 0; i < b.N; i++ {
+		r := bytes.NewReader(data)
+		ioutil.ReadAll(NewA2UReader(r, ACP))
+	}
 }
