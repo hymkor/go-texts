@@ -7,12 +7,12 @@ import (
 	"golang.org/x/text/transform"
 )
 
-type LineTransformer struct {
+type Filter struct {
 	bytes.Buffer
 	Filter func([]byte) ([]byte, error)
 }
 
-func (this *LineTransformer) Transform(dst, src []byte, atEOF bool) (int, int, error) {
+func (this *Filter) Transform(dst, src []byte, atEOF bool) (int, int, error) {
 	this.Write(src)
 
 	_src := make([]byte, this.Len())
@@ -47,6 +47,6 @@ func (this *LineTransformer) Transform(dst, src []byte, atEOF bool) (int, int, e
 	return len(_dst), len(src), nil
 }
 
-func NewLineFilter(r io.Reader, filter func([]byte) ([]byte, error)) io.Reader {
-	return transform.NewReader(r, &LineTransformer{Filter: filter})
+func New(r io.Reader, filter func([]byte) ([]byte, error)) io.Reader {
+	return transform.NewReader(r, &Filter{Filter: filter})
 }

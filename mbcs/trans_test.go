@@ -14,7 +14,7 @@ func TestA2UTransformer(t *testing.T) {
 		t.Fatal(err.Error())
 		return
 	}
-	utf8, err := ioutil.ReadAll(NewA2UReader(bytes.NewReader(mbcs), ACP))
+	utf8, err := ioutil.ReadAll(NewAtoUReader(bytes.NewReader(mbcs), ACP))
 	if err != nil {
 		t.Fatal(err.Error())
 		return

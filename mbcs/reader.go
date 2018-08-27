@@ -34,11 +34,3 @@ func NewAtoUReader(r io.Reader, cp uintptr) io.Reader {
 		return []byte(text), err
 	})
 }
-
-// NewA2UReader returns new reader translate from mbcs to utf8. (transform version)
-func NewA2UReader(r io.Reader, cp uintptr) io.Reader {
-	return filter.NewLineFilter(r, func(line []byte) ([]byte, error) {
-		text, err := AtoU(line, cp)
-		return []byte(text), err
-	})
-}
