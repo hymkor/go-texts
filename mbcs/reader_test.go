@@ -2,9 +2,13 @@ package mbcs
 
 import (
 	"bufio"
+	"bytes"
 	"io"
+	"io/ioutil"
 	"os"
 	"testing"
+
+	oldfilter "github.com/zetamatta/go-texts/filter/old"
 )
 
 func TestReader2(t *testing.T) {
@@ -34,4 +38,35 @@ func TestReader2(t *testing.T) {
 	println(buffer[0])
 	println(buffer[1])
 	println(buffer[2])
+}
+
+func OldAtoUReader(r io.Reader, cp uintptr) io.Reader {
+	return oldfilter.New(r, func(line []byte) ([]byte, error) {
+		text, err := AtoU(line, cp)
+		return []byte(text), err
+	})
+}
+
+func BenchmarkFilterOld(b *testing.B) {
+	data, err := ioutil.ReadFile("reader.go")
+	if err != nil {
+		b.Fatalf("%s\n", err.Error())
+		return
+	}
+	for i := 0; i < b.N; i++ {
+		r := bytes.NewReader(data)
+		ioutil.ReadAll(OldAtoUReader(r, ACP))
+	}
+}
+
+func BenchmarkFilter(b *testing.B) {
+	data, err := ioutil.ReadFile("reader.go")
+	if err != nil {
+		b.Fatalf("%s\n", err.Error())
+		return
+	}
+	for i := 0; i < b.N; i++ {
+		r := bytes.NewReader(data)
+		ioutil.ReadAll(NewAtoUReader(r, ACP))
+	}
 }

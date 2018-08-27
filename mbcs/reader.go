@@ -26,3 +26,11 @@ func NewAutoDetectReader(fd io.Reader, cp uintptr) io.Reader {
 		}
 	})
 }
+
+// NewAtoUReader returns new reader translate from mbcs to utf8.
+func NewAtoUReader(r io.Reader, cp uintptr) io.Reader {
+	return filter.New(r, func(line []byte) ([]byte, error) {
+		text, err := AtoU(line, cp)
+		return []byte(text), err
+	})
+}
