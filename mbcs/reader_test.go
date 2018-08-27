@@ -39,7 +39,7 @@ func TestReader2(t *testing.T) {
 }
 
 func BenchmarkFilter1(b *testing.B) {
-	data, err := ioutil.ReadFile("japan.txt")
+	data, err := ioutil.ReadFile("reader.go")
 	if err != nil {
 		b.Fatalf("%s\n", err.Error())
 		return
@@ -51,7 +51,7 @@ func BenchmarkFilter1(b *testing.B) {
 }
 
 func BenchmarkFilter2(b *testing.B) {
-	data, err := ioutil.ReadFile("japan.txt")
+	data, err := ioutil.ReadFile("reader.go")
 	if err != nil {
 		b.Fatalf("%s\n", err.Error())
 		return
