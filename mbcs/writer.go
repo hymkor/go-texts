@@ -11,7 +11,7 @@ var lf = []byte{'\n'}
 var crlf = []byte{'\r', '\n'}
 
 func NewWriter(fd io.Writer, cp uintptr) io.Writer {
-	return filter.NewWriteFilter(fd, func(source []byte) ([]byte, error) {
+	return filter.NewWriter(fd, func(source []byte) ([]byte, error) {
 		bin, err := UtoA(string(source), cp, true)
 		if err != nil {
 			return bin, err

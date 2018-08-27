@@ -51,6 +51,6 @@ func New(r io.Reader, filter func([]byte) ([]byte, error)) io.Reader {
 	return transform.NewReader(r, &Filter{Filter: filter})
 }
 
-func NewWriteFilter(r io.Writer, filter func([]byte) ([]byte, error)) io.Writer {
+func NewWriter(r io.Writer, filter func([]byte) ([]byte, error)) io.Writer {
 	return transform.NewWriter(r, &Filter{Filter: filter})
 }
