@@ -5,8 +5,6 @@ import (
 	"io"
 	"unicode/utf8"
 
-	"golang.org/x/text/transform"
-
 	"github.com/zetamatta/go-texts"
 	"github.com/zetamatta/go-texts/filter"
 )
@@ -37,12 +35,10 @@ func NewAtoUReader(r io.Reader, cp uintptr) io.Reader {
 	})
 }
 
-// NewA2UReader returns new reader translate from mbcs to utf8 with transfomer interface. This version is slower than NewAtoUReader but few allocation.
+// NewA2UReader returns new reader translate from mbcs to utf8. (transform version)
 func NewA2UReader(r io.Reader, cp uintptr) io.Reader {
-	return transform.NewReader(r, &filter.LineTransformer{
-		Filter: func(line []byte) ([]byte, error) {
-			text, err := AtoU(line, cp)
-			return []byte(text), err
-		},
+	return filter.NewLineFilter(r, func(line []byte) ([]byte, error) {
+		text, err := AtoU(line, cp)
+		return []byte(text), err
 	})
 }

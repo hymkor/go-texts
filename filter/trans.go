@@ -2,6 +2,7 @@ package filter
 
 import (
 	"bytes"
+	"io"
 
 	"golang.org/x/text/transform"
 )
@@ -44,4 +45,8 @@ func (this *LineTransformer) Transform(dst, src []byte, atEOF bool) (int, int, e
 	}
 	copy(dst, []byte(_dst))
 	return len(_dst), len(src), nil
+}
+
+func NewLineFilter(r io.Reader, filter func([]byte) ([]byte, error)) io.Reader {
+	return transform.NewReader(r, &LineTransformer{Filter: filter})
 }
