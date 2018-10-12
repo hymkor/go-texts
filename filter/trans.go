@@ -9,7 +9,8 @@ import (
 
 type Filter struct {
 	bytes.Buffer
-	Filter func([]byte) ([]byte, error)
+	Filter   func([]byte) ([]byte, error)
+	overflow []byte
 }
 
 func (this *Filter) Transform(dst, src []byte, atEOF bool) (int, int, error) {
@@ -39,9 +40,14 @@ func (this *Filter) Transform(dst, src []byte, atEOF bool) (int, int, error) {
 		rollback()
 		return 0, 0, err
 	}
+
+	if this.overflow != nil {
+		_dst = append(this.overflow, _dst...)
+		this.overflow = nil
+	}
 	if len(dst) < len(_dst) {
-		rollback()
-		return 0, 0, transform.ErrShortDst
+		this.overflow = _dst[:len(dst)]
+		_dst = _dst[len(dst):]
 	}
 	copy(dst, []byte(_dst))
 	return len(_dst), len(src), nil
