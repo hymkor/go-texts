@@ -46,8 +46,8 @@ func (this *Filter) Transform(dst, src []byte, atEOF bool) (int, int, error) {
 		this.overflow = nil
 	}
 	if len(dst) < len(_dst) {
-		this.overflow = _dst[:len(dst)]
-		_dst = _dst[len(dst):]
+		this.overflow = _dst[len(dst):]
+		_dst = _dst[:len(dst)]
 	}
 	copy(dst, []byte(_dst))
 	return len(_dst), len(src), nil
