@@ -37,10 +37,10 @@ func NewAutoDetectReader(fd io.Reader, cp uintptr) io.Reader {
 	var utf16left []byte
 	return filter.New(fd, func(line []byte) ([]byte, error) {
 		if utf16state == NotSet {
-			if line[0] == 0xFE && line[1] == 0xFF {
+			if len(line) >= 2 && line[0] == 0xFE && line[1] == 0xFF {
 				utf16state = UTF16BE
 				line = line[2:]
-			} else if line[0] == 0xFF && line[1] == 0xFE {
+			} else if len(line) >= 2 && line[0] == 0xFF && line[1] == 0xFE {
 				utf16state = UTF16LE
 				line = line[2:]
 			} else if pos := bytes.IndexByte(line, 0); pos >= 0 {
