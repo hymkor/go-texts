@@ -2,23 +2,30 @@ package main
 
 import (
 	"fmt"
-	"github.com/zetamatta/go-texts/mbcs"
 	"os"
+
+	"github.com/zetamatta/go-texts/mbcs"
 )
 
-func main() {
-	ansi, err := mbcs.UtoA("UTF8文字列",mbcs.ACP,true)
+func main1() error {
+	ansi, err := mbcs.UtoA("UTF8文字列", mbcs.ConsoleCP(), true)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		return
+		return err
 	}
 
-	utf8, err := mbcs.AtoU(ansi,mbcs.ACP)
+	utf8, err := mbcs.AtoU(ansi, mbcs.ConsoleCP())
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		return
+		return err
 	}
 	fmt.Printf("Ok: %s\n", utf8)
+	return nil
+}
+
+func main() {
+	if err := main1(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }
 
 // vim:set fenc=utf8:
