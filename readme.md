@@ -19,24 +19,21 @@ It makes sorted strings' array from keys of the given map whose key's type is st
 		fmt.Printf("%s: %s\n", key1, map1[key1])
 	}
 
-WithoutExt
-----------
-WithoutExt() returns the path removed extension.
-
-	const source = `c:\foo\bar.hoge\ahaha.txt`
-	result := dos.WithoutExt(source)
-	// result -> `c:\foo\bar.hoge\ahaha`
-
 "go-texts/mbcs"
 ===============
 
-Translate string between ANSI and UTF8
---------------------------------------
+UtoA
+-----
+UtoA translates UTF8 to ANSI. When the 3rd parameter is true, it drops NUL-code.
 
 	ansi, err := mbcs.UtoA("UTF8文字列", mbcs.ConsoleCP(), true)
 	if err != nil {
 		return err
 	}
+
+AtoU
+----
+AtoU translates ANSI to UTF8
 
 	utf8, err := mbcs.AtoU(ansi, mbcs.ConsoleCP())
 	if err != nil {
@@ -45,8 +42,13 @@ Translate string between ANSI and UTF8
 	fmt.Printf("Ok: %s\n", utf8)
 	return nil
 
-Reader converting from ANSI,UTF8 or UTF16 to UTF8
--------------------------------------------------
+ConsoleCP
+---------
+ConsoleCP returns the current **Console** Codepage (Not ones of OS and threads)
+
+NewAutoDetectReader
+-------------------
+NewAutoDetectReader is io.Reader converting from ANSI,UTF8 or UTF16 to UTF8
 
 	sc := bufio.NewScanner(mbcs.NewAutoDetectReader(os.Stdin, mbcs.ConsoleCP()))
 	for sc.Scan() {
@@ -59,7 +61,17 @@ Reader converting from ANSI,UTF8 or UTF16 to UTF8
 "go-texts/dos"
 =====================
 
-Call CMD.exe without troubles about double-quotation
-----------------------------------------------------
+System
+------
+System calls CMD.exe without troubles about double-quotation
 
 	dos.System(`echo "ahaha" "ihihi" "ufufu"`)
+
+
+WithoutExt
+----------
+WithoutExt returns the path removed extension.
+
+	const source = `c:\foo\bar.hoge\ahaha.txt`
+	result := dos.WithoutExt(source)
+	// result -> `c:\foo\bar.hoge\ahaha`
