@@ -8,8 +8,8 @@ import (
 var ByteOrderMark = []byte{0xEF, 0xBB, 0xBF}
 
 // SortedKeys makes sorted strings' array from keys of the given map whose key's type is string.
-func SortedKeys(mapInt interface{}) []string {
-	values := reflect.ValueOf(mapInt).MapKeys()
+func SortedKeys(map1 interface{}) []string {
+	values := reflect.ValueOf(map1).MapKeys()
 	result := make([]string, len(values))
 	for i, value1 := range values {
 		result[i] = value1.String()
