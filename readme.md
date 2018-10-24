@@ -5,7 +5,7 @@ go-texts is the utility package for text-data
 "go-texts"
 =========
 
-SortedKey
+SortedKeys
 ---------
 It makes sorted strings' array from keys of the given map whose key's type is string.
 
