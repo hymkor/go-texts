@@ -19,6 +19,13 @@ It makes sorted strings' array from keys of the given map whose key's type is st
 		fmt.Printf("%s: %s\n", key1, map1[key1])
 	}
 
+WithoutExt
+----------
+WithoutExt() returns the path removed extension.
+
+	const source = `c:\foo\bar.hoge\ahaha.txt`
+	result := dos.WithoutExt(source)
+	// result -> `c:\foo\bar.hoge\ahaha`
 
 "go-texts/mbcs"
 ===============
