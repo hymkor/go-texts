@@ -13,3 +13,7 @@ func System(cmdline string) error {
 	cmd1.Stdin = os.Stdin
 	return cmd1.Run()
 }
+
+func SystemWith(option, cmdline string) error {
+	return System(cmdline)
+}

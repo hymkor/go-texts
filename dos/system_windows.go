@@ -8,8 +8,16 @@ import (
 )
 
 func System(cmdline string) error {
+	return SystemWith("", cmdline)
+}
+
+func SystemWith(option, cmdline string) error {
 	var buffer strings.Builder
 
+	buffer.WriteString(option)
+	if buffer.Len() > 0 {
+		buffer.WriteByte(' ')
+	}
 	buffer.WriteString(`/S /C "`)
 	buffer.WriteString(cmdline)
 	buffer.WriteString(`"`)
