@@ -3,19 +3,24 @@ package dos
 import (
 	"os"
 	"os/exec"
+	"strings"
+	"syscall"
 )
 
 func System(cmdline string) error {
-	const CMDVAR = "CMDVAR"
+	var buffer strings.Builder
 
-	orgcmdarg := os.Getenv(CMDVAR)
-	defer os.Setenv(CMDVAR, orgcmdarg)
+	buffer.WriteString(`/S /C "`)
+	buffer.WriteString(cmdline)
+	buffer.WriteString(`"`)
 
-	os.Setenv(CMDVAR, cmdline)
-
-	cmd1 := exec.Command("cmd.exe", "/c", "%"+CMDVAR+"%")
+	cmd1 := exec.Command(os.Getenv("COMSPEC"))
 	cmd1.Stdout = os.Stdout
 	cmd1.Stderr = os.Stderr
 	cmd1.Stdin = os.Stdin
+	if cmd1.SysProcAttr == nil {
+		cmd1.SysProcAttr = new(syscall.SysProcAttr)
+	}
+	cmd1.SysProcAttr.CmdLine = buffer.String()
 	return cmd1.Run()
 }

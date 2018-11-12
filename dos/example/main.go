@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	dos.System(`echo "ahaha" "ihihi" "ufufu"`)
+	dos.System(`dir /w "C:\Program Files" & echo Done!`)
 }
