@@ -3,10 +3,11 @@ package mbcs
 import (
 	"syscall"
 	"unsafe"
+
+	"golang.org/x/sys/windows"
 )
 
 var kernel32 = syscall.NewLazyDLL("kernel32")
-var multiByteToWideChar = kernel32.NewProc("MultiByteToWideChar")
 var wideCharToMultiByte = kernel32.NewProc("WideCharToMultiByte")
 var getConsoleCp = kernel32.NewProc("GetConsoleCP")
 
@@ -54,19 +55,14 @@ func AtoU(mbcs []byte, cp uintptr) (string, error) {
 	if mbcs == nil || len(mbcs) <= 0 {
 		return "", nil
 	}
-	size, _, _ := multiByteToWideChar.Call(cp, 0,
-		uintptr(unsafe.Pointer(&mbcs[0])),
-		uintptr(len(mbcs)),
-		uintptr(0), 0)
+	size, err := windows.MultiByteToWideChar(uint32(cp), 0, &mbcs[0], int32(len(mbcs)), nil, 0)
 	if size <= 0 {
-		return "", syscall.GetLastError()
+		return "", err
 	}
 	utf16 := make([]uint16, size)
-	rc, _, _ := multiByteToWideChar.Call(cp, 0,
-		uintptr(unsafe.Pointer(&mbcs[0])), uintptr(len(mbcs)),
-		uintptr(unsafe.Pointer(&utf16[0])), size)
+	rc, err := windows.MultiByteToWideChar(uint32(cp), 0, &mbcs[0], int32(len(mbcs)), &utf16[0], size)
 	if rc == 0 {
-		return "", syscall.GetLastError()
+		return "", err
 	}
-	return syscall.UTF16ToString(utf16), nil
+	return windows.UTF16ToString(utf16), nil
 }
