@@ -21,19 +21,29 @@ const (
 	UTF16BE
 )
 
-type UTF8State int
-
-const (
-	NotUTF8 UTF8State = iota + 1
-	UTF8
-)
-
 var BOM8 = []byte{0xEF, 0xBB, 0xBF}
+
+func anyToUtf8(line []byte, cp uintptr) (string, error) {
+	if len(line) >= 3 &&
+		line[0] == BOM8[0] &&
+		line[1] == BOM8[1] &&
+		line[2] == BOM8[2] {
+
+		return string(line[3:]), nil
+	}
+	if utf8.Valid(line) {
+		return string(line), nil
+	}
+	text, err := AtoU(line, cp)
+	if err != nil {
+		return "", err
+	}
+	return text, nil
+}
 
 // NewAutoDetectReader returns reader object traslating from MBCS/UTF8 to UTF8
 func NewAutoDetectReader(fd io.Reader, cp uintptr) io.Reader {
 	var utf16state UTF16State = NotSet
-	var utf8state UTF8State = NotSet
 	var utf16left []byte
 	return filter.New(fd, func(line []byte) ([]byte, error) {
 		if utf16state == NotSet {
@@ -78,26 +88,25 @@ func NewAutoDetectReader(fd io.Reader, cp uintptr) io.Reader {
 			utf8s := syscall.UTF16ToString(utf16s)
 			return []byte(utf8s), nil
 		}
-		if utf8state == NotSet {
-			if len(line) >= 3 &&
-				line[0] == BOM8[0] &&
-				line[1] == BOM8[1] &&
-				line[2] == BOM8[2] {
-
-				line = line[3:]
-				utf8state = UTF8
-			} else if !utf8.Valid(line) {
-				utf8state = NotUTF8
+		var buffer bytes.Buffer
+		for {
+			endl := bytes.IndexByte(line, '\n')
+			if endl < 0 {
+				text, err := anyToUtf8(line, cp)
+				if err != nil {
+					return nil, err
+				}
+				buffer.WriteString(text)
+				return buffer.Bytes(), nil
 			}
-		}
-		if utf8state == NotUTF8 {
-			text, err := AtoU(line, cp)
+			text, err := anyToUtf8(line[:endl+1], cp)
 			if err != nil {
 				return nil, err
 			}
-			return []byte(text), nil
+			buffer.WriteString(text)
+			line = line[endl+1:]
 		}
-		return []byte(line), nil
+
 	})
 }
 
