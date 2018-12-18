@@ -1,12 +1,13 @@
 package mbcs
 
 import (
+	"bufio"
 	"bytes"
 	"io"
 	"syscall"
 	"unicode/utf8"
 
-	"github.com/zetamatta/go-texts/filter"
+	"github.com/tidwall/transform"
 )
 
 const (
@@ -23,29 +24,18 @@ const (
 
 var BOM8 = []byte{0xEF, 0xBB, 0xBF}
 
-func anyToUtf8(line []byte, cp uintptr) (string, error) {
-	if len(line) >= 3 &&
-		line[0] == BOM8[0] &&
-		line[1] == BOM8[1] &&
-		line[2] == BOM8[2] {
-
-		return string(line[3:]), nil
-	}
-	if utf8.Valid(line) {
-		return string(line), nil
-	}
-	text, err := AtoU(line, cp)
-	if err != nil {
-		return "", err
-	}
-	return text, nil
-}
-
 // NewAutoDetectReader returns reader object traslating from MBCS/UTF8 to UTF8
 func NewAutoDetectReader(fd io.Reader, cp uintptr) io.Reader {
 	var utf16state UTF16State = NotSet
 	var utf16left []byte
-	return filter.New(fd, func(line []byte) ([]byte, error) {
+
+	reader := bufio.NewReader(fd)
+	return transform.NewTransformer(func() ([]byte, error) {
+		line, err := reader.ReadBytes('\n')
+		if err != nil {
+			return nil, err
+		}
+
 		if utf16state == NotSet {
 			if len(line) >= 2 && line[0] == 0xFE && line[1] == 0xFF {
 				utf16state = UTF16BE
@@ -88,32 +78,36 @@ func NewAutoDetectReader(fd io.Reader, cp uintptr) io.Reader {
 			utf8s := syscall.UTF16ToString(utf16s)
 			return []byte(utf8s), nil
 		}
-		var buffer bytes.Buffer
-		for {
-			endl := bytes.IndexByte(line, '\n')
-			if endl < 0 {
-				text, err := anyToUtf8(line, cp)
-				if err != nil {
-					return nil, err
-				}
-				buffer.WriteString(text)
-				return buffer.Bytes(), nil
-			}
-			text, err := anyToUtf8(line[:endl+1], cp)
-			if err != nil {
-				return nil, err
-			}
-			buffer.WriteString(text)
-			line = line[endl+1:]
-		}
+		if len(line) >= 3 &&
+			line[0] == BOM8[0] &&
+			line[1] == BOM8[1] &&
+			line[2] == BOM8[2] {
 
+			return line[3:], nil
+		}
+		if utf8.Valid(line) {
+			return line, nil
+		}
+		text, err := AtoU(line, cp)
+		if err != nil {
+			return nil, err
+		}
+		return []byte(text), nil
 	})
 }
 
 // NewAtoUReader returns new reader translate from mbcs to utf8.
 func NewAtoUReader(r io.Reader, cp uintptr) io.Reader {
-	return filter.New(r, func(line []byte) ([]byte, error) {
+	br := bufio.NewReader(r)
+	return transform.NewTransformer(func() ([]byte, error) {
+		line, err := br.ReadBytes('\n')
+		if err != nil {
+			return nil, err
+		}
 		text, err := AtoU(line, cp)
-		return []byte(text), err
+		if err != nil {
+			return nil, err
+		}
+		return []byte(text), nil
 	})
 }
