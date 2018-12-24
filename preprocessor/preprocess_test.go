@@ -3,6 +3,7 @@ package preprocessor_test
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -44,6 +45,33 @@ func Benchmark_filter(b *testing.B) {
 func Benchmark_transformer(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		sc := bufio.NewScanner(transform.NewTransformer(lnum()))
+		for sc.Scan() {
+			fmt.Fprintln(ioutil.Discard, sc.Text())
+		}
+		if err := sc.Err(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
+	}
+}
+
+func ioPiper(f func() ([]byte, error)) io.Reader {
+	in, out := io.Pipe()
+	go func() {
+		for {
+			data, err := f()
+			out.Write(data)
+			if err != nil {
+				out.CloseWithError(err)
+				return
+			}
+		}
+	}()
+	return in
+}
+
+func Benchmark_iopipe(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		sc := bufio.NewScanner(ioPiper(lnum()))
 		for sc.Scan() {
 			fmt.Fprintln(ioutil.Discard, sc.Text())
 		}
