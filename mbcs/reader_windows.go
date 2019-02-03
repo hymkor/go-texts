@@ -31,10 +31,7 @@ func NewAutoDetectReader(fd io.Reader, cp uintptr) io.Reader {
 
 	reader := bufio.NewReader(fd)
 	return transform.NewTransformer(func() ([]byte, error) {
-		line, err := reader.ReadBytes('\n')
-		if err != nil {
-			return nil, err
-		}
+		line, err0 := reader.ReadBytes('\n')
 
 		if utf16state == NotSet {
 			if len(line) >= 2 && line[0] == 0xFE && line[1] == 0xFF {
@@ -76,23 +73,23 @@ func NewAutoDetectReader(fd io.Reader, cp uintptr) io.Reader {
 				utf16s = append(utf16s, w)
 			}
 			utf8s := syscall.UTF16ToString(utf16s)
-			return []byte(utf8s), nil
+			return []byte(utf8s), err0
 		}
 		if len(line) >= 3 &&
 			line[0] == BOM8[0] &&
 			line[1] == BOM8[1] &&
 			line[2] == BOM8[2] {
 
-			return line[3:], nil
+			return line[3:], err0
 		}
 		if utf8.Valid(line) {
-			return line, nil
+			return line, err0
 		}
 		text, err := AtoU(line, cp)
 		if err != nil {
 			return nil, err
 		}
-		return []byte(text), nil
+		return []byte(text), err0
 	})
 }
 
