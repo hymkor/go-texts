@@ -97,14 +97,11 @@ func NewAutoDetectReader(fd io.Reader, cp uintptr) io.Reader {
 func NewAtoUReader(r io.Reader, cp uintptr) io.Reader {
 	br := bufio.NewReader(r)
 	return transform.NewTransformer(func() ([]byte, error) {
-		line, err := br.ReadBytes('\n')
-		if err != nil {
-			return nil, err
-		}
+		line, readerr := br.ReadBytes('\n')
 		text, err := AtoU(line, cp)
 		if err != nil {
 			return nil, err
 		}
-		return []byte(text), nil
+		return []byte(text), readerr
 	})
 }
