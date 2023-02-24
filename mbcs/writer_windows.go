@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"io"
 
-	"github.com/zetamatta/go-texts/filter"
+	"github.com/hymkor/go-texts/filter"
 )
 
 var lf = []byte{'\n'}

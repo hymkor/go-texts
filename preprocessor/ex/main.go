@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/zetamatta/go-texts/preprocessor"
+	"github.com/hymkor/go-texts/preprocessor"
 )
 
 func main() {

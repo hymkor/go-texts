@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/zetamatta/go-texts/dos"
+	"github.com/hymkor/go-texts/dos"
 )
 
 func main() {

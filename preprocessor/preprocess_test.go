@@ -8,8 +8,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hymkor/go-texts/preprocessor"
 	"github.com/tidwall/transform"
-	"github.com/zetamatta/go-texts/preprocessor"
 )
 
 func lnum() func() ([]byte, error) {

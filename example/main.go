@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/zetamatta/go-texts"
+	"github.com/hymkor/go-texts"
 )
 
 func main() {

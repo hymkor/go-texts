@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/zetamatta/go-texts/mbcs"
+	"github.com/hymkor/go-texts/mbcs"
 )
 
 func main() {

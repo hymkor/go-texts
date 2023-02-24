@@ -1,4 +1,4 @@
-module github.com/zetamatta/go-texts
+module github.com/hymkor/go-texts
 
 go 1.20
 

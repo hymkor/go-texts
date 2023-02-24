@@ -8,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	oldfilter "github.com/zetamatta/go-texts/filter/old"
+	oldfilter "github.com/hymkor/go-texts/filter/old"
 )
 
 func TestReader2(t *testing.T) {
