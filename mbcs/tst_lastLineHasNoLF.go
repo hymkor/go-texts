@@ -1,3 +1,4 @@
+//go:build ignore
 // +build ignore
 
 // Test case: source stream's last line has no LF.
